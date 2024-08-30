@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
 
 	"github.com/Chaitanya-Shahare/orders-microservice/application"
 )
@@ -10,9 +12,14 @@ import (
 func main() {
 	app := application.New();
 
-	err := app.Start(context.TODO())
+	// derive a new context
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
+	err := app.Start(ctx)
 
 	if err != nil {
 		fmt.Println("failed to start app:", err)
 	}
+
 }
