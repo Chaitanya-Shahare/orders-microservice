@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -8,14 +9,23 @@ import (
 )
 
 func main() {
-	server:= chi.NewRouter()
+	router:= chi.NewRouter()
 
-	server.Use(middleware.Logger)
+	router.Use(middleware.Logger)
 
-	server.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	server := &http.Server{
+		Addr: ":3000",
+		Handler: router,
+	}
+
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello World!"))
 	})
 
-	http.ListenAndServe(":3000", server)
+	err := server.ListenAndServe()
+
+	if (err != nil) {
+		fmt.Println("Failed to start server", err)
+	}
 
 }
